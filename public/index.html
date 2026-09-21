@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f7f9" />
+    <title>Codex Switchboard</title>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <section id="login-screen" class="login-screen">
+      <form id="login-form" class="login-card">
+        <div class="brand-icon">⌘</div>
+        <p class="eyebrow">YOUR LOCAL CODEX CONTROL ROOM</p>
+        <h1>Welcome to<br />Switchboard.</h1>
+        <p class="muted">Your accounts. One place to keep work moving.</p>
+        <label for="token">Dashboard token</label
+        ><input
+          id="token"
+          name="token"
+          type="password"
+          autocomplete="current-password"
+          required
+          placeholder="ADMIN_TOKEN from your .env"
+        />
+        <button class="primary" type="submit">
+          Open your workspace <span>↗</span>
+        </button>
+        <p id="login-error" class="error" role="alert"></p>
+        <p class="small muted">
+          First time? Run <code>npm run setup</code>, then find your token in
+          <code>.env</code>.
+        </p>
+      </form>
+      <div class="login-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="orbit-core">⌘</div>
+        <span class="orbit-label label-one">ACCOUNT 01 <b>Connected</b></span
+        ><span class="orbit-label label-two"
+          >ACCOUNT 02 <b>Ready when you are</b></span
+        >
+        <p>More room<br />for your next idea.</p>
+      </div>
+    </section>
+    <div id="app" class="app-shell" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="#overview"
+          ><span class="brand-icon">⌘</span
+          ><span>switchboard<small>FOR CODEX</small></span></a
+        >
+        <p class="nav-label">WORKSPACE</p>
+        <nav aria-label="Main navigation">
+          <a href="#overview" data-view="overview"><span>▦</span> Overview</a>
+          <a href="#accounts" data-view="accounts"
+            ><span>◉</span> Accounts <b id="nav-account-count">0</b></a
+          >
+          <a href="#activity" data-view="activity"
+            ><span>≋</span> Job activity</a
+          >
+          <a href="#settings" data-view="settings"
+            ><span>⚙</span> Configuration</a
+          >
+        </nav>
+        <div class="sidebar-note">
+          <span class="tiny-dot"></span> Local by design
+          <p>Separate accounts.<br />A shared view of your work.</p>
+          <a
+            href="https://developers.openai.com/codex/auth/"
+            target="_blank"
+            rel="noreferrer"
+            >Codex authentication ↗</a
+          >
+        </div>
+        <div class="profile">
+          <span class="avatar">L</span>
+          <div>
+            Local workspace<small id="connection-status">Connecting…</small>
+          </div>
+          <button
+            id="logout"
+            class="icon-button"
+            title="Sign out"
+            aria-label="Sign out"
+          >
+            ↪
+          </button>
+        </div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <div>
+            <span class="breadcrumb">Workspace</span><span class="slash">/</span
+            ><span id="page-name">Overview</span>
+          </div>
+          <span class="local-pill"
+            ><span class="tiny-dot"></span> Local instance</span
+          >
+        </header>
+        <div class="page">
+          <section class="page-heading">
+            <div>
+              <p class="eyebrow">CODEX SWITCHBOARD</p>
+              <h1 id="page-title">Keep the momentum.</h1>
+              <p id="page-subtitle" class="muted">
+                All your accounts and coding jobs, working together.
+              </p>
+            </div>
+            <button class="primary" data-action="new-job">＋ New job</button>
+          </section>
+          <div id="overview-view" class="view">
+            <section class="hero">
+              <div>
+                <span class="hero-tag"
+                  ><span class="tiny-dot"></span> ONE WORKSPACE. MULTIPLE
+                  ACCOUNTS.</span
+                >
+                <h2>Your next account.<br />Already in the loop.</h2>
+                <p>
+                  Run jobs across your accounts. When one reaches its limit,<br
+                    class="desktop-only"
+                  />
+                  let the next available account take over.
+                </p>
+                <button class="dark-button" data-action="add-account">
+                  Connect an account <span>↗</span>
+                </button>
+              </div>
+              <div class="routing-art" aria-hidden="true">
+                <div class="routing-line"></div>
+                <div class="route-node node-a">A<span>ACCOUNT</span></div>
+                <div class="route-center">⌘</div>
+                <div class="route-node node-b">B<span>ACCOUNT</span></div>
+                <div class="route-caption">A LITTLE MORE CONTINUITY.</div>
+              </div>
+            </section>
+            <section
+              id="stats"
+              class="stats"
+              aria-label="Workspace statistics"
+            ></section>
+            <section>
+              <div class="section-heading">
+                <div>
+                  <h2>
+                    Your accounts
+                    <span id="account-total" class="count">0</span>
+                  </h2>
+                  <p class="muted small">
+                    Independent logins. Ready to work side by side.
+                  </p>
+                </div>
+                <button class="text-button" data-action="add-account">
+                  ＋ Add account
+                </button>
+              </div>
+              <div id="overview-accounts" class="account-grid"></div>
+            </section>
+            <section class="jobs-section">
+              <div class="section-heading">
+                <div>
+                  <h2>Recent jobs</h2>
+                  <p class="muted small">
+                    Follow each attempt, from queued to complete.
+                  </p>
+                </div>
+                <a class="text-link" href="#activity">View all activity →</a>
+              </div>
+              <div id="recent-jobs" class="jobs-list"></div>
+            </section>
+          </div>
+          <div id="accounts-view" class="view" hidden>
+            <div class="section-heading">
+              <p class="muted">
+                Sign in once per account. Pause an account whenever you need.
+              </p>
+              <button class="secondary" data-action="add-account">
+                ＋ Add account
+              </button>
+            </div>
+            <div id="all-accounts" class="account-grid"></div>
+            <div class="info-note">
+              Usage shown here comes from completed job attempts. Remaining
+              subscription quota is not exposed by this dashboard. A cooldown is
+              a local retry delay, not a confirmed quota reset time.
+            </div>
+          </div>
+          <div id="activity-view" class="view" hidden>
+            <div class="filter-row">
+              <label for="job-filter">Show jobs</label
+              ><select id="job-filter">
+                <option value="all">All statuses</option>
+                <option value="active">Active & queued</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed & needs review</option>
+              </select>
+            </div>
+            <div id="all-jobs" class="jobs-list"></div>
+          </div>
+          <div id="settings-view" class="view" hidden>
+            <div class="settings-card">
+              <h2>Workspace configuration</h2>
+              <p class="muted">
+                Edit these values in <code>.env</code> and restart the server to
+                apply changes.
+              </p>
+              <dl id="settings-list"></dl>
+              <div class="info-note">
+                This dashboard manages its own Codex CLI jobs. It does not
+                switch accounts in an already-running Codex desktop or IDE
+                session.
+              </div>
+            </div>
+            <div class="settings-card">
+              <h2>How switching works</h2>
+              <ol>
+                <li>Each account uses a separate local login directory.</li>
+                <li>
+                  Jobs use available accounts, up to your concurrency limit.
+                  Overlapping workspaces run one job at a time.
+                </li>
+                <li>
+                  On a reported usage limit, the account cools down and eligible
+                  jobs retry with another account.
+                </li>
+                <li>
+                  Write-enabled jobs pause for review unless you explicitly
+                  allow automatic write retries.
+                </li>
+              </ol>
+              <p class="muted small">
+                Retries start a fresh Codex session with the original prompt and
+                a reminder to inspect existing work. They do not transfer the
+                previous conversation.
+              </p>
+            </div>
+          </div>
+          <footer>
+            Built for a steady workflow.<span>Codex Switchboard · v1.0</span>
+          </footer>
+        </div>
+      </main>
+    </div>
+    <dialog id="account-dialog">
+      <form id="account-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">GROW YOUR WORKSPACE</p>
+            <h2>Add an account</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-button"
+            data-close="account-dialog"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <label for="account-name">Account name</label
+        ><input
+          id="account-name"
+          name="name"
+          required
+          maxlength="60"
+          placeholder="e.g. Personal or Work"
+        /><label for="account-type">Authentication</label
+        ><select id="account-type" name="type">
+          <option value="chatgpt">Sign in with ChatGPT</option>
+          <option value="api">API key from .env</option>
+        </select>
+        <div id="api-key-field" hidden>
+          <label for="api-key-env">Environment variable name</label
+          ><input
+            id="api-key-env"
+            name="apiKeyEnv"
+            placeholder="ACCOUNT_WORK_API_KEY"
+            pattern="ACCOUNT_[A-Z0-9_]+_API_KEY"
+          />
+          <p class="small muted">
+            Enter the variable name here, and put its secret value in .env. API
+            usage is billed separately from ChatGPT.
+          </p>
+        </div>
+        <p id="chatgpt-help" class="info-note">
+          After adding this account, copy its login command and run it in your
+          project terminal. Sign in with the account you want to use.
+        </p>
+        <button class="primary full-width" type="submit">Add account →</button>
+      </form>
+    </dialog>
+    <dialog id="job-dialog">
+      <form id="job-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">LET’S GET TO WORK</p>
+            <h2>Create a job</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-button"
+            data-close="job-dialog"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <label for="prompt">What should Codex do?</label
+        ><textarea
+          id="prompt"
+          name="prompt"
+          required
+          maxlength="32000"
+          rows="4"
+          placeholder="Review the project and suggest improvements…"
+        ></textarea
+        ><label for="workspace">Project directory</label
+        ><input
+          id="workspace"
+          name="workspace"
+          required
+          value="."
+          placeholder="my-project"
+        />
+        <p class="small muted path-hint" id="workspace-hint"></p>
+        <div class="form-grid">
+          <div>
+            <label for="job-account">Starting account</label
+            ><select id="job-account" name="accountId"></select>
+          </div>
+          <div>
+            <label for="sandbox">Permissions</label
+            ><select id="sandbox" name="sandbox">
+              <option value="read-only">Read only</option>
+              <option value="workspace-write">Allow workspace edits</option>
+            </select>
+          </div>
+        </div>
+        <label for="model"
+          >Model <span class="muted small">optional</span></label
+        ><input
+          id="model"
+          name="model"
+          maxlength="100"
+          placeholder="Use Codex default"
+        /><label class="check-label"
+          ><input type="checkbox" name="autoFailover" checked /> Automatically
+          switch on usage limits</label
+        >
+        <div id="write-retry-field" hidden>
+          <label class="check-label"
+            ><input type="checkbox" name="allowWriteRetry" /> Allow automatic
+            retries of write-enabled jobs</label
+          >
+          <p class="small warning">
+            An interrupted attempt may have changed files or run commands.
+            Retrying can repeat actions. Leave unchecked to review changes
+            first.
+          </p>
+        </div>
+        <button class="primary full-width" type="submit">
+          Queue job <span>↗</span>
+        </button>
+      </form>
+    </dialog>
+    <dialog id="detail-dialog" class="detail-dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">JOB DETAILS</p>
+          <h2>Inside the run</h2>
+        </div>
+        <button
+          class="icon-button"
+          data-close="detail-dialog"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+      <div id="job-detail"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </body>
+</html>
