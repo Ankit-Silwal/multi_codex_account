@@ -62,6 +62,7 @@ function toast(message) {
   }, 6000);
 }
 function showLogin() {
+  document.querySelectorAll('dialog[open]').forEach((dialog) => dialog.close());
   authenticated = false;
   $('#app').hidden = true;
   $('#login-screen').hidden = false;

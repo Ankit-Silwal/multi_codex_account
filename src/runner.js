@@ -146,6 +146,8 @@ export function runCodex({
       } catch {
         return;
       }
+      if (!event || typeof event !== 'object' || typeof event.type !== 'string')
+        return;
       const safe = redact(JSON.stringify(event));
       onEvent(
         safe.length <= 32000
@@ -160,7 +162,9 @@ export function runCodex({
         failure =
           typeof event.error === 'string'
             ? event.error
-            : event.error?.message ||
+            : (event.error?.code
+                ? `${event.error.code}: ${event.error.message || ''}`
+                : event.error?.message) ||
               event.message ||
               JSON.stringify(event.error || {});
       if (event.type === 'turn.completed') {

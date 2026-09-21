@@ -37,6 +37,8 @@ test('CLI adapter reports quota errors only on failed attempts', async () => {
   const result = await run('quota-failure');
   assert.equal(result.ok, false);
   assert.equal(result.quota, true);
+  const coded = await run('coded-failure');
+  assert.equal(coded.quota, true);
   const recovered = await run('recovered');
   assert.equal(recovered.ok, true);
   assert.equal(recovered.quota, false);
