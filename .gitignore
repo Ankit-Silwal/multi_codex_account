@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+data/
+workspaces/
+coverage/
+test-results/
+*.log
+auth.json
+.DS_Store
